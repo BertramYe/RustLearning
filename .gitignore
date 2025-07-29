@@ -1,0 +1,26 @@
+# Ignore target directory
+/target
+
+# Ignore environment config files
+.env
+.env.local
+.env.production
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore IDE/editor-specific files
+.vscode/
+.idea/
+*~
+*.swp
+
+# Optional: Ignore Cargo.lock for library projects
+# Cargo.lock
+
+# Ignore logs and temporary files
+*.log
+*.dSYM/
+*.stackdump
