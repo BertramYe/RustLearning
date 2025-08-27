@@ -10,7 +10,13 @@ fn main() {
    //  为了输出显示，一样需要使用 debug 进行打印结果
    println!("test tuple : {test_tuple1:?}");
    println!("test tuple 2: {test_tuple2:?}");
-   print!("test1 {test1:?}")
+   println!("test1 {test1:?}");
+
+
+   // special type of the array
+   let numbers_slice:&[i32] = &[1,2,3,4,5];
+   println!("the numbers of the slice {numbers_slice:?}");
+   
 }
 
 
