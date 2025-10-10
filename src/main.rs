@@ -1,13 +1,23 @@
 
 fn main() {   
-    let mut x = 5;
-    let p: *mut i32 = &mut x;  // 可变裸指针
-    unsafe {
-        *p = 10;  // 通过裸指针修改数据
-    };
-    unsafe  {
-        println!("the value of the p points to: {}",*p); // 解引用裸指针，打印它指向的值
-    }
+    let mut x = 5;       // 创建一个可变变量 x
+    let p= &mut x;  // 创建一个可变变量 x，并存储引用到 p
+    // 注意下面这么写是不行的，因为此时 p 只是一个可变引用，它不是真正存储值的地方，
+    // p = 10;
+    // println!("the value of the p points to: {}",p); // 此时打印会报错
+
+    // 为了修改 p 可变引用所对应的值，此时可以使用 *p 先解引用，从而将其存储值的 x 的值修改为 10。
+    // *p 等价于取 p 指向的地址中的值，相当于 x。
+    // 其内存操作就是： 
+    // 1. p 是指向 x 的一个指针（引用），它存储的是 x 在栈中的地址。
+    // 2. 解引用 *p 就是使用这个地址去访问 x 存储的值（即 x 在栈中的值）。
+    // 3. 当你执行 *p = 10 时，你实际上是访问了 x 所存储的内存位置，将其内容修改为 10。
+    //  需要注意的是： 此时 x 的值存储在栈上，因为它是一个简单的 i32 类型。如果 x 是一个动态分配的堆对象（例如 Box<i32> 或 Vec），那么它的数据确实存储在堆上。
+    *p = 11;  // 通过解可变引用 p 修改 x 的值
+    println!("the value of the p points to: {}",p); // 此时打印的值为 the value of the p points to: 11
+    println!("the value of the x points to: {}",x); // 此时打印的值为 the value of the x points to: 11
+
+    //  从以上打印可以看出，上面的最初的 x 通过 *p 解引用其值被真正修改掉了。
 }
 
 
