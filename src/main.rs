@@ -1,26 +1,52 @@
-
-fn main() {   
-    let mut x = 5;       // 创建一个可变变量 x
-    let p= &mut x;  // 创建一个可变变量 x，并存储引用到 p
-    // 注意下面这么写是不行的，因为此时 p 只是一个可变引用，它不是真正存储值的地方，
-    // p = 10;
-    // println!("the value of the p points to: {}",p); // 此时打印会报错
-
-    // 为了修改 p 可变引用所对应的值，此时可以使用 *p 先解引用，从而将其存储值的 x 的值修改为 10。
-    // *p 等价于取 p 指向的地址中的值，相当于 x。
-    // 其内存操作就是： 
-    // 1. p 是指向 x 的一个指针（引用），它存储的是 x 在栈中的地址。
-    // 2. 解引用 *p 就是使用这个地址去访问 x 存储的值（即 x 在栈中的值）。
-    // 3. 当你执行 *p = 10 时，你实际上是访问了 x 所存储的内存位置，将其内容修改为 10。
-    //  需要注意的是： 此时 x 的值存储在栈上，因为它是一个简单的 i32 类型。如果 x 是一个动态分配的堆对象（例如 Box<i32> 或 Vec），那么它的数据确实存储在堆上。
-    *p = 11;  // 通过解可变引用 p 修改 x 的值
-    println!("the value of the p points to: {}",p); // 此时打印的值为 the value of the p points to: 11
-    println!("the value of the x points to: {}",x); // 此时打印的值为 the value of the x points to: 11
-
-    //  从以上打印可以看出，上面的最初的 x 通过 *p 解引用其值被真正修改掉了。
+trait Barking {
+    fn bark(&self); // 特征 Barking 抽象出了一个 bark 方法
 }
 
+struct Dog {
+    name: String,
+}
 
+struct Engine {
+    horsepower: u32,
+}
 
+struct Car {
+    maker: String,
+    engine: Engine,
+    barker: Box<dyn Barking>,  // 组合并实现多态
+}
 
+// 为 Dog实现 Barking 特征中的 bark 方法
+impl Barking for Dog {
+    fn bark(&self) {
+        println!("{} says Woof!", self.name);
+    }
+}
 
+impl Car {
+    // 没有 self 的 静态方法
+    fn new(make: String, horsepower: u32, barker: Box<dyn Barking>) -> Car {
+        Car {
+            maker:make,
+            engine: Engine { horsepower },
+            barker,  // 这里可以像js 一样，往对象里面传参
+        } // 由于此时省略了 return ， 所以结尾一定不能添加分号 ； ， 否则会被 Rust 看成是 普通语句，并返回一个 （） 对象，而报错。
+    }
+
+    // 这是实例化方法，有 &self 入参
+    fn play_sound(&self) {
+        println!("{} maked the {}'s housepower car",self.maker,self.engine.horsepower);
+        self.barker.bark();
+    }
+}
+
+fn main() {
+    let dog = Dog { name: String::from("Buddy") };
+    // 先狗吠
+    dog.bark();
+    // 注意对于下面的 Car 由于在实例化时，直接入参了 dog 对象，
+    // 所以在下面的 函数执行完时，dog 会被drop掉，这是因为 下面的new在调用时,入参dog 会导致 dog 的所有权ownership发生变动,所以会被销毁。 
+    let car = Car::new(String::from("Toyota"), 200, Box::new(dog));
+    // 再卡车声浪
+    car.play_sound();  // 输出：Buddy says Woof!
+}
