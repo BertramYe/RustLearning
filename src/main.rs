@@ -1,55 +1,29 @@
-trait Barking {
-    fn bark(&self); // 特征 Barking 抽象出了一个 bark 方法
-}
 
-struct Dog {
-    name: String,
-}
 
-struct Engine {
-    horsepower: u32,
-}
 
-struct Car {
-    maker: String,
-    engine: Engine,
-    barker: Box<dyn Barking>,  // 组合并实现多态
-}
-
-// 为 Dog实现 Barking 特征中的 bark 方法
-impl Barking for Dog {
-    fn bark(&self) {
-        println!("{} says Woof!", self.name);
-    }
-}
-
-impl Car {
-    // 没有 self 的 静态方法
-    fn new(make: String, horsepower: u32, barker: Box<dyn Barking>) -> Car {
-        
-        // 由于此时下面省略了关键字 return， 所以结尾一定不能添加分号 ； ， 
-        // 否则会被 Rust 看成是 普通语句，并返回 (), 注意此时返回的 () 不是tuple，而是单元类型，而不会返回 Car 实例化的对象，从而报错。
-        Car {
-            maker:make,
-            engine: Engine { horsepower },
-            barker,  // 这里可以像js 一样，往对象里面传参
-        } 
-    }
-
-    // 这是实例化方法，有 &self 入参
-    fn play_sound(&self) {
-        println!("{} maked the {}'s housepower car",self.maker,self.engine.horsepower);
-        self.barker.bark();
-    }
-}
 
 fn main() {
-    let dog = Dog { name: String::from("Buddy") };
-    // 先狗吠
-    dog.bark(); // 输出 Buddy says Woof!
-    // 注意对于下面的 Car 由于在实例化时，直接入参了 dog 对象，
-    // 所以在下面的 函数执行完时，dog 会被drop掉，这是因为 下面的new在调用时,入参dog 会导致 dog 的所有权ownership发生变动,所以会被销毁。 
-    let car = Car::new(String::from("Toyota"), 200, Box::new(dog));
-    // 再卡车声浪
-    car.play_sound();  // 输出：Toyota maked the 200's housepower car  和 Buddy says Woof!
+    let a = "a";
+    #[allow(unused_assignments)] // 注释掉未使用变量的编译报警提示
+    let mut  b = "b";  // 位置接使用而在后续重新赋值，可能会有 unused_assignments 报警，此时可以使用下划线跳过未使用变量的提醒,或者使用 #[allow(unused_assignments)] 注释掉未使用变量的编译报警
+    b = "B";
+    // 虽然 const 定义的 常量可以使用小写的 c 表示，而在实际的编译时也只是报警，但是当在真正使用时，最好使用大写定义常量
+    // const c:&str = "c";
+    // 虽然以上不报错，但是在以下使用时，最好使用大写 C 来表示
+    const C:&str = "c";
+
+    println!("this is the value a: {a},b: {b} , c: {C}"); // 打印： this is the value a: a,b: B , c: c
+    // 利用 const 定义的常量可以作用于全局
+    println!("the static value TEST_CONST_VALUE is : {TEST_CONST_VALUE}"); // 打印： the static value TEST_CONST_VALUE is : hhhhh
+    println!("The static AAA is {AAA}"); // 打印： The static AAA is aaa
+    // 使用 unsafe 来访问 _BBB
+    // unsafe {
+    //     println!("The static BBB is {_BBB}"); // 会报错，因为可变的静态变量太危险
+    // }
 }
+
+// 使用 const 定义的常量可以作用于全局，同时const 定义的常量一定要标注其常量类型，否则在Rust中编译时，一定报错
+const TEST_CONST_VALUE:&str = "hhhhh"; 
+//  其实上面这种使用 cosnt 定义的常量，和下面这种利用 static 定义的常量有点类似，都可以作用于全局，但是其存储的地方和生效是不一样的
+static AAA:&str= "aaa";
+static mut _BBB:&str= "BBBB"; // 虽然可以定义可变的静态变量，但是由于太危险，所以上面的调用会报错
