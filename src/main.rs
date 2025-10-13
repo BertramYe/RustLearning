@@ -1,29 +1,20 @@
 
-
-
-
 fn main() {
-    let a = "a";
-    #[allow(unused_assignments)] // 注释掉未使用变量的编译报警提示
-    let mut  b = "b";  // 位置接使用而在后续重新赋值，可能会有 unused_assignments 报警，此时可以使用下划线跳过未使用变量的提醒,或者使用 #[allow(unused_assignments)] 注释掉未使用变量的编译报警
-    b = "B";
-    // 虽然 const 定义的 常量可以使用小写的 c 表示，而在实际的编译时也只是报警，但是当在真正使用时，最好使用大写定义常量
-    // const c:&str = "c";
-    // 虽然以上不报错，但是在以下使用时，最好使用大写 C 来表示
-    const C:&str = "c";
+    let a: &str = "hhhhh";
 
-    println!("this is the value a: {a},b: {b} , c: {C}"); // 打印： this is the value a: a,b: B , c: c
-    // 利用 const 定义的常量可以作用于全局
-    println!("the static value TEST_CONST_VALUE is : {TEST_CONST_VALUE}"); // 打印： the static value TEST_CONST_VALUE is : hhhhh
-    println!("The static AAA is {AAA}"); // 打印： The static AAA is aaa
-    // 使用 unsafe 来访问 _BBB
-    // unsafe {
-    //     println!("The static BBB is {_BBB}"); // 会报错，因为可变的静态变量太危险
-    // }
+    //  注意下面是 rust 的一个代码块（code block）, 它回像普通代码一样被执行，只是不同点在于作用域的问题
+    {
+        //  这一步会 先拿到 原来的 a 的值进行拼接，接着会将上面的 a 进行遮蔽，在当前 代码块的作用域中使用新的 a
+        let a = a.to_string() + "aaa"; 
+        println!("the inner a value is {a}"); // 会打印 ： the inner a value is hhhhhaaa
+    }
+
+    // 这一步会先拿到原来 a （即 hhhhh ）的长度 a.len() ， 在将其值进行遮蔽，从这里开始，用新的 a 来代替
+    let a: usize = a.len();
+    let a: usize = a * 2;
+
+    println!("the outer value of  a is {a}"); // 会打印： the outer value of  a is 10
+
 }
 
-// 使用 const 定义的常量可以作用于全局，同时const 定义的常量一定要标注其常量类型，否则在Rust中编译时，一定报错
-const TEST_CONST_VALUE:&str = "hhhhh"; 
-//  其实上面这种使用 cosnt 定义的常量，和下面这种利用 static 定义的常量有点类似，都可以作用于全局，但是其存储的地方和生效是不一样的
-static AAA:&str= "aaa";
-static mut _BBB:&str= "BBBB"; // 虽然可以定义可变的静态变量，但是由于太危险，所以上面的调用会报错
+
