@@ -1,19 +1,12 @@
-
-#[allow(unused_parens)] // 忽略当前函数的内使用 if 时其条件判断中使用括号造成的警告
 fn main() {
-    let  a: i32 = 10;
-    // 在 rust 逻辑里面，其可以使用括号括号括住 if 的条件，
-    // 但是会有警告，可以在当前函数头部使用  #[allow(unused_parens)] 去忽略掉这个警告
-    if (a % 3 == 0) {    
-        println!(" {a} can be divided by 3")
-    }else if a % 2 == 0 {
-        println!(" {a} can be divided by 2")
-    }else {
-        println!("{a} can be divided by some other numbers !")
+    let mut  counter = 0;
+    while counter < 10 {
+        counter += 1;
+        if counter % 2 == 0 {
+            continue;  // 跳过偶数，不执行后面的逻辑，而重新进行下一轮循环
+        }
+        // 偶数不执行这一行逻辑
+        println!("odd number: {counter}");  
     }
-    // Rust 没有三元表达式， 但是可以有像类似 python 语法相似的 下面的表达式， 因为本质上 {} 可以作为一个带有返回值的 代码块
-    let b = if a %3 == 0 {3} else {0};
-    println!("the value of the b is {b}");
+
 }
-
-
