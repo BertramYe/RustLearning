@@ -1,12 +1,16 @@
+
+
+struct  Color(u8,u8,u8);
+struct Point(f32,f32);
+
 fn main() {
-    let mut  counter = 0;
-    while counter < 10 {
-        counter += 1;
-        if counter % 2 == 0 {
-            continue;  // 跳过偶数，不执行后面的逻辑，而重新进行下一轮循环
-        }
-        // 偶数不执行这一行逻辑
-        println!("odd number: {counter}");  
-    }
+    // 初始化以上的对象
+    let red = Color(255, 0, 0);
+    let p = Point(10.5, 20.3);
+
+    // 访问字段：通过 .0、.1、.2 下标
+    // 这里使用占位符，是因为不可以使用 {red.0} 这种写法，会报错的
+    println!("Red = ({}, {}, {})", red.0, red.1, red.2); // 打印： Red = (255, 0, 0)
+    println!("Point = ({}, {})", p.0, p.1); // 打印： Point = (10.5, 20.3)
 
 }
